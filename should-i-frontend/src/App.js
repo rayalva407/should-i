@@ -10,6 +10,38 @@ class App extends Component {
     }
   }
 
+  handleLogin = (data) => {
+    this.setState({
+      isLoggedIn: true,
+      user: data.user
+    })
+  }
+
+  handleLogout = () => {
+    this.setState({
+      isLoggedIn: false,
+      user: {}
+    })
+  }
+
+  loginStatus = () => {
+    fetch('http://localhost:4000/logged_in')
+      .then(response => response.json())
+      .then(response => {
+        if (response.data.logged_in) {
+          this.handleLogin(response)
+        }
+        else {
+          this.handleLogout()
+        }
+      })
+      .catch(error => console.log('api errors:', error))
+  }
+
+  componentDidMount() {
+    this.loginStatus()
+  }
+
   render() {
     return (
       <div>
