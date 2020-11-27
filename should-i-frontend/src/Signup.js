@@ -22,6 +22,53 @@ class Signup extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault()
+    const {username, email, password, password_confirmation} = this.state
+    let user = {
+      username: username,
+      email: email,
+      password: password,
+      password_confirmation: password_confirmation
+    }
+
+    let configObj = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({user})
+      
+      .fetch('http://localhost:4000/', configObj)
+      .then(response => response.json())
+      .then(response => {
+        if (response.data.status === 'created') {
+          this.props.handleLogin(response.data)
+          this.redirect()
+        }
+        else {
+          this.setState({
+            errors: response.data.errors
+          })
+        }
+      })
+      .catch(error => console.log('errors:', error))
+    };
+  }
+
+  redirect = () => {
+    this.props.history.push('/')
+  }
+
+  handleErrors = () => {
+    return (
+      <div>
+        <ul>
+          {this.state.errors.map((error) => {
+            return <li key={error}>{error}</li>
+          })}
+        </ul>
+      </div>
+    )
   }
 
   render() {
